@@ -22,7 +22,7 @@ source ~/.profile
 mkdir -p ~/minds
 cd ~/minds
 bash -c "curl --fail-with-body -o ~/minds/preload-fn.sh $GH_URL_OPTION/server/preload-fn.sh"
-echo -e "\n# Preload function\nsource minds/preload-fn.sh" >> ~/.profile
+echo -e "\n# Preload function\nsource ~/minds/preload-fn.sh" >> ~/.profile
 source ~/.profile
 ```
 
@@ -36,6 +36,7 @@ executeScript server/load-node-context.sh && source ~/.profile
 
 # Resources
 1) Cosmos chain registry: https://github.com/cosmos/chain-registry/tree/master
+2) Cosmos Tutorials: https://tutorials.cosmos.network/academy/1-what-is-cosmos/
 3) Cosmos SDK: https://docs.cosmos.network/main
-6) Cosmos Hub Document: https://docs.cosmos.network/main
-7) Other validators: https://polkachu.com, https://app.nodejumper.io
+4) Cosmos Hub Document: https://docs.cosmos.network/main
+5) Other validators: https://polkachu.com, https://app.nodejumper.io

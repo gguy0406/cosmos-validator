@@ -8,6 +8,7 @@ Description=$PRETTY_NAME Report
 
 [Service]
 Type=oneshot
+User=$USER
 ExecStart=/bin/bash $HOME/minds/report.sh
 Group=systemd-journal
 EOF
