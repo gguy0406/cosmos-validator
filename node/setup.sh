@@ -20,6 +20,7 @@ function getTrustHeight {
 function turnOffStateSync {
 	sleep 30m
 	sed -i "s/enable = true/enable = false/" $CONFIG_TOML
+	sed -i "s/log_level = .*/log_level = "warn"/" $CONFIG_TOML
 }
 
 function resetStateSync {
@@ -90,8 +91,14 @@ $DAEMON_NAME init --chain-id $CHAIN_ID $nodeMoniker
 echoc "Config chain genenis, seeds, state sync, etc.."
 wget -O $NODE_HOME/config/genesis.json $GENESIS_URL
 sed -i "s/minimum-gas-prices = .*/minimum-gas-prices = \"0.0025$DENOM\"/" $APP_TOML
-sed -i "s/pruning = .*/pruning = \"everything\"/" $APP_TOML
+sed -i "s/pruning = .*/pruning = \"custom\"/" $APP_TOML
+sed -i "s/pruning-keep-recent = .*/pruning-keep-recent = \"100\"/" $APP_TOML
+sed -i "s/pruning-keep-every = .*/pruning-keep-every = \"0\"/" $APP_TOML
+sed -i "s/pruning-interval = .*/pruning-interval = \"10\"/" $APP_TOML
+sed -i "s/snapshot-interval = .*/snapshot-interval = 0/" $APP_TOML
 sed -i "s/seeds = .*/seeds = \"$SEEDS\"/" $CONFIG_TOML
+sed -i "s/max_num_inbound_peers = .*/max_num_inbound_peers = 120/" $CONFIG_TOML
+sed -i "s/max_num_outbound_peers = .*/max_num_outbound_peers = 60/" $CONFIG_TOML
 sed -i "s/indexer = .*/indexer = \"null\"/" $CONFIG_TOML
 sed -i "s/enable = false/enable = true/" $CONFIG_TOML
 sed -i "s|rpc_servers = .*|rpc_servers = \"$RPC_SERVERS\"|" $CONFIG_TOML
@@ -99,7 +106,13 @@ sed -i "s|rpc_servers = .*|rpc_servers = \"$RPC_SERVERS\"|" $CONFIG_TOML
 echo -ne "\e[32m"
 sed -n '/^minimum-gas-prices =/p' $APP_TOML
 sed -n '/^pruning =/p' $APP_TOML
+sed -n '/^pruning-keep-recent =/p' $APP_TOML
+sed -n '/^pruning-keep-every =/p' $APP_TOML
+sed -n '/^pruning-interval =/p' $APP_TOML
+sed -n '/^snapshot-interval =/p' $APP_TOML
 sed -n '/^seeds =/p' $CONFIG_TOML
+sed -n '/^max_num_inbound_peers =/p' $CONFIG_TOML
+sed -n '/^max_num_outbound_peers =/p' $CONFIG_TOML
 sed -n '/^indexer =/p' $CONFIG_TOML
 sed -n '/^enable =/p' $CONFIG_TOML
 sed -n '/^rpc_servers =/p' $CONFIG_TOML

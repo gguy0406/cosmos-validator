@@ -72,6 +72,7 @@ done
 
 if [[ ${#SEEDS[@]} -eq 0 ]]; then echor "No seed is set"; fi
 
+NO_SEED=${#SEEDS[@]}
 SEEDS=$(echo ${SEEDS[@]} | tr ' ' ',')
 
 echoc "Finding available rpc server..."
@@ -112,6 +113,7 @@ EOF
 source ~/.profile
 
 # Print set variables
+tabs 4
 echoc "Make sure everything is set properly"
 echog "Chain name:\t\t\t\t$CHAIN_NAME"
 echog "Pretty name:\t\t\t$PRETTY_NAME"
@@ -122,6 +124,6 @@ echog "Denom:\t\t\t\t\t$DENOM"
 echog "Git repo:\t\t\t\t$GIT_REPO"
 echog "Recommended version:\t$RECOMMENDED_VERSION"
 echog "Genesis url:\t\t\t$GENESIS_URL"
-echog "Seeds:\t\t\t\t\t$SEEDS"
+echog "Seeds ($NO_SEEDS):\t\t\t\t\t$SEEDS" | cut -c -$COLUMNS
 echog "RPC endpoint:\t\t\t$RPC_ENDPOINT"
-echog "RPC servers:\t\t\t$RPC_SERVERS"
+echog "RPC servers (manual):\t\t\t$RPC_SERVERS"

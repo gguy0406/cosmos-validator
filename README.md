@@ -39,4 +39,5 @@ executeScript server/load-node-context.sh && source ~/.profile
 2) Cosmos Tutorials: https://tutorials.cosmos.network/academy/1-what-is-cosmos/
 3) Cosmos SDK: https://docs.cosmos.network/main
 4) Cosmos Hub Document: https://docs.cosmos.network/main
-5) Other validators: https://polkachu.com, https://app.nodejumper.io
+5) Evmos Document: https://docs.evmos.org/validate/setup-and-configuration/faq
+6) Other validators: https://polkachu.com, https://app.nodejumper.io
