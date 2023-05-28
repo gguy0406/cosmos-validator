@@ -30,7 +30,6 @@ sudo ufw default allow outgoing
 sudo ufw default deny incoming
 sudo ufw allow proto tcp to 0.0.0.0/0 port $SSH_PORT
 sudo ufw allow proto tcp to 0.0.0.0/0 port 26656
-sudo ufw allow proto tcp to 0.0.0.0/0 port 26657
 sudo sed -i "/# ok icmp codes for INPUT/a -A ufw-before-input -p icmp --icmp-type echo-request -j DROP" /etc/ufw/before.rules
 echo -ne "\e[32m"
 sudo sed -n '/*echo-requrest -j DROP/p' /etc/ufw/before.rules

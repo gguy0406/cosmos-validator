@@ -34,5 +34,5 @@ echo "$passphrase" | $DAEMON_NAME tx staking create-validator \
 	--website=$website \
 	-y
 
-$DAEMON_NAME query tendermint-validator-set | grep $($DAEMON_NAME tendermint show-address)
-$DAEMON_NAME query slashing signing-info $($DAEMON_NAME tendermint show-validator) --chain-id=$CHAIN_ID
+$DAEMON_NAME q tendermint-validator-set | grep $($DAEMON_NAME tendermint show-address)
+$DAEMON_NAME q slashing signing-info $($DAEMON_NAME tendermint show-validator) --chain-id=$CHAIN_ID

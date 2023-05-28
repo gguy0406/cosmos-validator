@@ -91,11 +91,11 @@ $DAEMON_NAME init --chain-id $CHAIN_ID $nodeMoniker
 echoc "Config chain genenis, seeds, state sync, etc.."
 wget -O $NODE_HOME/config/genesis.json $GENESIS_URL
 sed -i "s/minimum-gas-prices = .*/minimum-gas-prices = \"0.0025$DENOM\"/" $APP_TOML
-sed -i "s/pruning = .*/pruning = \"custom\"/" $APP_TOML
-sed -i "s/pruning-keep-recent = .*/pruning-keep-recent = \"100\"/" $APP_TOML
-sed -i "s/pruning-keep-every = .*/pruning-keep-every = \"0\"/" $APP_TOML
-sed -i "s/pruning-interval = .*/pruning-interval = \"10\"/" $APP_TOML
-sed -i "s/snapshot-interval = .*/snapshot-interval = 0/" $APP_TOML
+sed -i "s/min-retain-blocks = .*/min-retain-blocks = 250000/" $APP_TOML
+# sed -i "s/pruning = .*/pruning = \"custom\"/" $APP_TOML
+# sed -i "s/pruning-keep-recent = .*/pruning-keep-recent = \"100\"/" $APP_TOML
+# sed -i "s/pruning-interval = .*/pruning-interval = \"10\"/" $APP_TOML
+# sed -i "s/snapshot-interval = .*/snapshot-interval = 0/" $APP_TOML
 sed -i "s/seeds = .*/seeds = \"$SEEDS\"/" $CONFIG_TOML
 sed -i "s/max_num_inbound_peers = .*/max_num_inbound_peers = 120/" $CONFIG_TOML
 sed -i "s/max_num_outbound_peers = .*/max_num_outbound_peers = 60/" $CONFIG_TOML
@@ -105,9 +105,9 @@ sed -i "s|rpc_servers = .*|rpc_servers = \"$RPC_SERVERS\"|" $CONFIG_TOML
 
 echo -ne "\e[32m"
 sed -n '/^minimum-gas-prices =/p' $APP_TOML
+sed -n '/^min-retain-blocks =/p' $APP_TOML
 sed -n '/^pruning =/p' $APP_TOML
 sed -n '/^pruning-keep-recent =/p' $APP_TOML
-sed -n '/^pruning-keep-every =/p' $APP_TOML
 sed -n '/^pruning-interval =/p' $APP_TOML
 sed -n '/^snapshot-interval =/p' $APP_TOML
 sed -n '/^seeds =/p' $CONFIG_TOML
