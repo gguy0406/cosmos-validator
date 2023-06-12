@@ -124,6 +124,6 @@ echog "Denom:\t\t\t\t\t$DENOM"
 echog "Git repo:\t\t\t\t$GIT_REPO"
 echog "Recommended version:\t$RECOMMENDED_VERSION"
 echog "Genesis url:\t\t\t$GENESIS_URL"
-echog "Seeds ($NO_SEEDS):\t\t\t\t\t$SEEDS" | cut -c -$COLUMNS
+echog "Seeds ($NO_SEED):\t\t\t\t$SEEDS" | cut -c -$COLUMNS
 echog "RPC endpoint:\t\t\t$RPC_ENDPOINT"
-echog "RPC servers (manual):\t\t\t$RPC_SERVERS"
+echog "RPC servers (manual):\t$RPC_SERVERS"
