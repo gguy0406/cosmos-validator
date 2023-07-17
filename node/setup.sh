@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 
-GO_VERSION=1.20.3
+GO_VERSION=1.20.5
 APP_TOML=$NODE_HOME/config/app.toml
 CONFIG_TOML=$NODE_HOME/config/config.toml
 
