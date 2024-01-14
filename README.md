@@ -23,8 +23,8 @@ echo -e "export GH_URL_OPTION=\"-L -H \\\"Accept: application/vnd.github.raw\\\"
 
 ```bash
 # Add preload function
-read -p "Input token: " GHP_TOKEN
-source ~/.profile
+# read -p "Input token: " GHP_TOKEN
+# source ~/.profile
 mkdir -p ~/minds
 cd ~/minds
 bash -c "curl --fail-with-body -o ~/minds/preload-fn.sh $GH_URL_OPTION/server/preload-fn.sh"

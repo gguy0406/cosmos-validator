@@ -11,23 +11,23 @@ function monitorService {
 }
 
 function executeScript {
-	while getopts ":t" option; do
-		case $option in
-			t) GHP_TOKEN=$OPTARG; export GHP_TOKEN; source ~/.profile;;
-			\?) echo "Error: Invalid option"; return 1;;
-		esac
-	done
+	# while getopts ":t" option; do
+	# 	case $option in
+	# 		t) GHP_TOKEN=$OPTARG; export GHP_TOKEN; source ~/.profile;;
+	# 		\?) echo "Error: Invalid option"; return 1;;
+	# 	esac
+	# done
 
-	if [[ -z $GHP_TOKEN ]]; then
-		read -p "Input token: " GHP_TOKEN
+	# if [[ -z $GHP_TOKEN ]]; then
+	# 	read -p "Input token: " GHP_TOKEN
 
-		GHP_TOKEN=$(echo "$GHP_TOKEN" | sed 's/[[:blank:]]//g')
+	# 	GHP_TOKEN=$(echo "$GHP_TOKEN" | sed 's/[[:blank:]]//g')
 
-		if [[ -z $GHP_TOKEN ]]; then echo "Error: Invalid input"; return 1; fi
+	# 	if [[ -z $GHP_TOKEN ]]; then echo "Error: Invalid input"; return 1; fi
 
-		export GHP_TOKEN
-		source ~/.profile
-	fi
+	# 	export GHP_TOKEN
+	# 	source ~/.profile
+	# fi
 
 	GH_SCRIPT=$(bash -c "curl --fail-with-body $GH_URL_OPTION/$1")
 	shift

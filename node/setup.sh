@@ -13,7 +13,7 @@ cd ~/$CHAIN_NAME
 # Install Go
 echoc "Installing Go..."
 GO_SHORT_VERSION=$(grep -m 1 go go.mod | cut -d' ' -f2)
-GO_VERSION_REGEX="^$GO_SHORT_VERSION(\.[0-9]+|)$"
+GO_VERSION_REGEX="^go$GO_SHORT_VERSION(\.[0-9]+|)$"
 GO_VERSION=$(curl -s "https://go.dev/dl/?mode=json&include=all" | jq -r ".[].version" | grep -E $GO_VERSION_REGEX | sort -V | tail -n 1)
 ARCH=$(uname -m)
 
