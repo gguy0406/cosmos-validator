@@ -25,7 +25,7 @@ if [[ $networkType = mainnet ]]; then
 
 	case $chainName in
 		aura) RPC_SERVERS=https://snapshot-1.aura.network:443,https://snapshot-2.aura.network:443;;
-		stargaze) RPC_SERVERS=https://stargaze-rpc.polkachu.com:443,https://stargaze-rpc.ibs.team:443;;
+		stargaze) RPC_SERVERS=https://stargaze-rpc.polkachu.com:443,https://rpc.stargaze-apis.com:443,https://stargaze-rpc.ibs.team:443;;
 		stride) RPC_SERVERS=https://stride-rpc.polkachu.com:443,https://stride.rpc.chandrastation.com:443;;
 		*) getRpcServers;;
 	esac
@@ -128,3 +128,5 @@ echog "Genesis url:\t\t\t$GENESIS_URL"
 echog "Seeds ($NO_SEED):\t\t\t\t$SEEDS" | cut -c -$COLUMNS
 echog "RPC endpoint:\t\t\t$RPC_ENDPOINT"
 echog "RPC servers (manual):\t$RPC_SERVERS"
+
+echoy "Should manually recheck git version, chain's developers may not update it frequently"

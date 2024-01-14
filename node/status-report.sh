@@ -1,5 +1,15 @@
 #!/bin/bash
 set -e
+
+if [[ -z $1 ]]; then echo "Need to specify discord webhook token"; exit 1; fi
+
+cat << EOF >> ~/.profile
+
+# Report variables
+export SIGNED_BLOCKS_WINDOW=$RPC_SERVERS
+export VALIDATOR_ADDRESS=$RPC_SERVERS
+export DISCORD_WEBHOOK_URL=$1
+EOF
 source ~/.profile
 
 report="VM report"
@@ -15,5 +25,5 @@ report="$report\nValidator report"
 report="$report\n\tMissed in last $SIGNED_BLOCKS_WINDOW blocks: $($DAEMON_NAME q slashing signing-info -o \"json\" $($DAEMON_NAME tendermint show-validator) | jq -r .missed_blocks_counter)"
 report="$report\n\tDelegator shares: $(LC_ALL=en_US.UTF-8 printf "%'.3f" $($DAEMON_NAME q staking validator -o \"json\" $VALIDATOR_ADDRESS | jq -r '.delegator_shares | tonumber / 1000000'))"
 
-curlCommand="curl -H 'Content-Type: application/json' -d '{\"username\": \"$(hostname)\", \"content\": $(echo -e "$report" | jq -Rsa)}' $DISCORD_WEBHOOK_URL"
+curlCommand="curl -H 'Content-Type: application/json' -d '{\"username\": \"$(hostname)\", \"content\": $(echo -e "$report" | jq -Rsa)}' https://discord.com/api/webhooks/$DISCORD_WEBHOOK_URL"
 bash -c "$curlCommand"

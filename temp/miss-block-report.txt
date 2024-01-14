@@ -1,0 +1,11 @@
+[Unit]
+Description=Miss Block Report
+
+[Service]
+ExecStart=/usr/bin/node $HOME/minds/miss-block-report.js
+Restart=on-failure
+RestartSec=3
+User=nobody
+
+[Install]
+WantedBy=multi-user.target
