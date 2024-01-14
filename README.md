@@ -15,7 +15,7 @@ sudo reboot
 If you using minimal Ubuntu
 
 ```bash
-sudo apt install -y curl iputils-ping git wget
+sudo apt install -y curl iputils-ping git nano systemd wget
 ```
 
 Before executing script from this private repo, you must create yourself a [github personal access token](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token) and then run the following commands (note that some commands followed by a `source` command in order to load variable exported in `~/.profile` file to the current shell session)
@@ -30,7 +30,7 @@ echo -e "export GH_URL_OPTION=\"-L -H \\\"Accept: application/vnd.github.raw\\\"
 ```bash
 # Add preload function
 # read -p "Input token: " GHP_TOKEN
-# source ~/.profile
+source ~/.profile
 mkdir -p ~/minds
 cd ~/minds
 bash -c "curl --fail-with-body -o ~/minds/preload-fn.sh $GH_URL_OPTION/server/preload-fn.sh"
@@ -39,6 +39,8 @@ source ~/.profile
 ```
 
 All set, now you can start executing any script by the `executeScript` command, e.g. setup server, load node context
+
+If you're not using docker container
 
 ```bash
 executeScript server/setup.sh

@@ -1,15 +1,5 @@
 #!/bin/bash
 set -e
-
-if [[ -z $1 ]]; then echo "Need to specify discord webhook token"; exit 1; fi
-
-cat << EOF >> ~/.profile
-
-# Report variables
-export SIGNED_BLOCKS_WINDOW=$RPC_SERVERS
-export VALIDATOR_ADDRESS=$RPC_SERVERS
-export DISCORD_WEBHOOK_URL=$1
-EOF
 source ~/.profile
 
 report="VM report"

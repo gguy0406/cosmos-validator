@@ -83,7 +83,7 @@ sed -n '/^enable =/p' $CONFIG_TOML
 sed -n '/^rpc_servers =/p' $CONFIG_TOML
 echo -ne "\e[0m"
 
-TRUST_HEIGHT=$(($(curl -s $RPC_ENDPOINT/block | jq -r .result.block.header.height) - $1))
+TRUST_HEIGHT=$(($(curl -s $RPC_ENDPOINT/block | jq -r .result.block.header.height) - 1000))
 TRUST_HASH=$(curl -s $RPC_ENDPOINT/block?height=$TRUST_HEIGHT | jq -r .result.block_id.hash)
 
 sed -i "s/trust_height = .*/trust_height = \"$TRUST_HEIGHT\"/" $CONFIG_TOML
