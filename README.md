@@ -12,6 +12,12 @@ You may need to reboot after upgrading (if prompted)
 sudo reboot
 ```
 
+If you using minimal Ubuntu
+
+```bash
+sudo apt install -y curl iputils-ping git wget
+```
+
 Before executing script from this private repo, you must create yourself a [github personal access token](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token) and then run the following commands (note that some commands followed by a `source` command in order to load variable exported in `~/.profile` file to the current shell session)
 
 ```bash
