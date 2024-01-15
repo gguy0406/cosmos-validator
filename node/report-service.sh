@@ -1,13 +1,8 @@
 #!/bin/bash
 set -e
 
-while getopts ":t" option; do
-	case $option in
-		t) DISCORD_WEBHOOK_URL=$OPTARG;;
-    a) VALIDATOR_ADDRESS=$OPTARG;;
-		\?) echo "Error: Invalid option"; exit 1;;
-	esac
-done
+DISCORD_WEBHOOK_URL=$1
+VALIDATOR_ADDRESS=$2
 
 if [[ -z $DISCORD_WEBHOOK_URL ]]; then echo "Missing discord webhook url"; exit 1; fi
 if [[ -z $VALIDATOR_ADDRESS ]]; then echo "Missing validator address"; exit 1; fi
@@ -27,7 +22,7 @@ bash -c "curl --fail-with-body -o ~/minds/miss-block-report.js $GH_URL_OPTION/no
 echoc "Schedule report"
 sudo tee /etc/systemd/system/$DAEMON_NAME-status-report.service > /dev/null << EOF
 [Unit]
-Description=$PRETTY_NAME Report
+Description=$PRETTY_NAME Status Report
 
 [Service]
 Type=oneshot
@@ -53,10 +48,10 @@ sudo tee /etc/systemd/system/$DAEMON_NAME-miss-block-report.service > /dev/null 
 Description=Miss Block Report
 
 [Service]
-ExecStart=/usr/bin/node $HOME/minds/miss-block-report.js
+ExecStart=/usr/bin/node $HOME/minds/miss-block-report.js $DISCORD_WEBHOOK_URL $(hostname)
 Restart=on-failure
 RestartSec=3
-User=nobody
+User=$USER
 
 [Install]
 WantedBy=multi-user.target
@@ -64,9 +59,9 @@ EOF
 
 curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash
 sudo apt install -y nodejs
-npm i -g ws
+sudo npm i -g ws
 sudo systemctl daemon-reload
 sudo systemctl restart systemd-journald
 sudo systemctl enable --now $DAEMON_NAME-report.timer
-systemctl status --no-pager -n 0 $DAEMON_NAME-report.service
-systemctl status --no-pager -n 0 $DAEMON_NAME-report.timer
+sudo systemctl enable --now $DAEMON_NAME-miss-block-report.service
+systemctl status --no-pager -n 0 $DAEMON_NAME-report.timer $DAEMON_NAME-miss-block-report.service

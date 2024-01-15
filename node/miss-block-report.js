@@ -4,11 +4,9 @@ const WebSocket = require('ws');
 const crypto = require('node:crypto');
 
 const webhookToken = process.argv[0];
+const hostname = process.argv[1];
 
-if (!webhookToken) {
-  console.error('No webhooks token provided');
-  return;
-}
+if (!webhookToken) throw new Error('No webhooks token provided');
 
 const ws = new WebSocket('ws://0.0.0.0:26657/websocket');
 
@@ -20,7 +18,7 @@ function sendMessageToDiscord(message) {
     method: 'POST',
   });
 
-  req.write(JSON.stringify({ username: '(contabo) stargaze-mainnet-7', content: message }));
+  req.write(JSON.stringify({ username: hostname, content: message }));
   req.on('error', (e) => console.error(e));
   req.end();
 }
@@ -59,8 +57,10 @@ try {
   let validatorSet = {};
 
   getValidatorSet();
+  console.log(validatorSet);
 
   ws.onopen = () => {
+    console.log('Tendermint connection opened');
     sendMessageToDiscord('Tendermint connection opened');
     ws.send(queryFactory(0, "tm.event='NewBlock'"));
     ws.send(queryFactory(1, "tm.event='ValidatorSetUpdates'"));
@@ -68,9 +68,15 @@ try {
     // ws.send(queryFactory(3, "tm.event='TimeoutWait'"));
   };
 
-  ws.onclose = () => sendMessageToDiscord('Tendermint connection closed');
+  ws.onclose = () => {
+    console.log('Tendermint connection closed');
+    sendMessageToDiscord('Tendermint connection closed');
+  };
 
-  ws.onerror = (error) => sendMessageToDiscord(`Tendermint connection error ${error.message}`);
+  ws.onerror = (error) => {
+    console.error(`Tendermint connection error ${error.message}`);
+    sendMessageToDiscord(`Tendermint connection error ${error.message}`);
+  };
 
   ws.onmessage = (event) => {
     const parsedSocketData = JSON.parse(event.data);
@@ -116,5 +122,6 @@ try {
     }
   };
 } catch (error) {
+  console.error(`Report error ${erorr.message}`);
   sendMessageToDiscord(`Report service error ${error.message}`);
 }
