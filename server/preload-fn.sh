@@ -7,7 +7,7 @@ function echoy { echo -e "\e[33m$1\e[0m"; }
 function monitorService {
 	landscape-sysinfo
 	systemctl status --no-pager -n 0 $DAEMON_NAME
-	journalctl -f -o cat -u $DAEMON_NAME
+	sudo journalctl -f -o cat -u $DAEMON_NAME
 }
 
 function executeScript {

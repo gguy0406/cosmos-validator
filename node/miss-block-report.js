@@ -44,11 +44,11 @@ function getValidatorSet() {
 
         parsedData.validators.forEach((validator) => {
           const base64ConsensusPubKey = validator.consensus_pubkey.key;
-          const pubKeyBytes = Buffer.from(base64ConsensusPubKey, 'base64');
-          const hashedPubKey = crypto.createHash('sha256').update(pubKeyBytes).digest();
-          const validatorAddress = hashedPubKey.subarray(0, 20).toString('hex').toUpperCase();
+          const ed25519PubkeyRaw = Buffer.from(base64ConsensusPubKey, 'base64');
+          const addressData = crypto.createHash('sha256').update(ed25519PubkeyRaw).digest().subarray(0, 20);
+          const hexAddress = addressData.toString('hex').toUpperCase();
 
-          validatorSet[validatorAddress] = validator.description.moniker;
+          validatorSet[hexAddress] = validator.description.moniker;
         });
       });
     }

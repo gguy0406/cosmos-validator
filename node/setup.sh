@@ -3,7 +3,7 @@ set -e
 
 # Install packages
 echoc "Installing packages..."
-sudo apt install -y build-essential
+sudo apt install -y build-essential git landscape-common
 
 # Get chain repository
 echoc "Getting chain repository..."

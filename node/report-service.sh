@@ -1,14 +1,22 @@
 #!/bin/bash
 set -e
 
-if [[ -z $1 ]]; then echo "Need to specify discord webhook token"; exit 1; fi
+while getopts ":t" option; do
+	case $option in
+		t) DISCORD_WEBHOOK_URL=$OPTARG;;
+    a) VALIDATOR_ADDRESS=$OPTARG;;
+		\?) echo "Error: Invalid option"; return 1;;
+	esac
+done
+
+if [[ -z $DISCORD_WEBHOOK_URL || -z $VALIDATOR_ADDRESS ]]; then echo "Missing argument"; exit 1; fi
 
 cat << EOF >> ~/.profile
 
 # Report variables
-export SIGNED_BLOCKS_WINDOW=$RPC_SERVERS
-export VALIDATOR_ADDRESS=$RPC_SERVERS
-export DISCORD_WEBHOOK_URL=$1
+export SIGNED_BLOCKS_WINDOW=$(cat $NODE_HOME/config/genesis.json | jq -r ".app_state.slashing.params.signed_blocks_window")
+export VALIDATOR_ADDRESS=$VALIDATOR_ADDRESS
+export DISCORD_WEBHOOK_URL=$DISCORD_WEBHOOK_URL
 EOF
 
 echoc "Get report script"
