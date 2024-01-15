@@ -64,6 +64,5 @@ cd ~/minds/miss-block-report
 npm i ws
 sudo systemctl daemon-reload
 sudo systemctl restart systemd-journald
-sudo systemctl enable --now $DAEMON_NAME-status-report.timer
-sudo systemctl enable --now $DAEMON_NAME-miss-block-report.service
+sudo systemctl enable --now $DAEMON_NAME-status-report.timer $DAEMON_NAME-miss-block-report.service
 systemctl status --no-pager -n 0 $DAEMON_NAME-status-report.timer $DAEMON_NAME-miss-block-report.service
