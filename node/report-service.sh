@@ -5,7 +5,7 @@ while getopts ":t" option; do
 	case $option in
 		t) DISCORD_WEBHOOK_URL=$OPTARG;;
     a) VALIDATOR_ADDRESS=$OPTARG;;
-		\?) echo "Error: Invalid option"; return 1;;
+		\?) echo "Error: Invalid option"; exit 1;;
 	esac
 done
 
