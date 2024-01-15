@@ -9,7 +9,8 @@ while getopts ":t" option; do
 	esac
 done
 
-if [[ -z $DISCORD_WEBHOOK_URL || -z $VALIDATOR_ADDRESS ]]; then echo "Missing argument"; exit 1; fi
+if [[ -z $DISCORD_WEBHOOK_URL ]]; then echo "Missing discord webhook url"; exit 1; fi
+if [[ -z $VALIDATOR_ADDRESS ]]; then echo "Missing validator address"; exit 1; fi
 
 cat << EOF >> ~/.profile
 
