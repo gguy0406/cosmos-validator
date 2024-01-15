@@ -19,7 +19,7 @@ function sendMessageToDiscord(message) {
   });
 
   req.write(JSON.stringify({ username: hostname, content: message }));
-  req.on('error', (e) => console.error(e));
+  req.on('error', (e) => console.error(`Send message error ${error.message}`));
   req.end();
 }
 

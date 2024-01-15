@@ -17,7 +17,7 @@ EOF
 
 echoc "Get report script"
 bash -c "curl --fail-with-body -o ~/minds/status-report.sh $GH_URL_OPTION/node/status-report.sh"
-bash -c "curl --fail-with-body -o ~/minds/miss-block-report.js $GH_URL_OPTION/node/miss-block-report.js"
+bash -c "curl --fail-with-body -o ~/minds/miss-block-report/report.js $GH_URL_OPTION/node/miss-block-report.js"
 
 echoc "Schedule report"
 sudo tee /etc/systemd/system/$DAEMON_NAME-status-report.service > /dev/null << EOF
@@ -48,7 +48,7 @@ sudo tee /etc/systemd/system/$DAEMON_NAME-miss-block-report.service > /dev/null 
 Description=Miss Block Report
 
 [Service]
-ExecStart=/usr/bin/node $HOME/minds/miss-block-report.js $DISCORD_WEBHOOK_URL $(hostname)
+ExecStart=/usr/bin/node $HOME/minds/miss-block-report/report.js $DISCORD_WEBHOOK_URL $(hostname)
 Restart=on-failure
 RestartSec=3
 User=$USER
@@ -59,7 +59,8 @@ EOF
 
 curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash
 sudo apt install -y nodejs
-sudo npm i -g ws
+cd ~/minds/miss-block-report
+sudo npm i ws
 sudo systemctl daemon-reload
 sudo systemctl restart systemd-journald
 sudo systemctl enable --now $DAEMON_NAME-report.timer
