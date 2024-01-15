@@ -48,6 +48,8 @@ function getValidatorSet() {
 
           validatorSet[hexAddress] = validator.description.moniker;
         });
+
+        console.log(validatorSet);
       });
     }
   );
@@ -57,7 +59,6 @@ try {
   let validatorSet = {};
 
   getValidatorSet();
-  console.log(validatorSet);
 
   ws.onopen = () => {
     console.log('Tendermint connection opened');
