@@ -3,8 +3,8 @@ const https = require('node:https');
 const WebSocket = require('ws');
 const crypto = require('node:crypto');
 
-const webhookToken = process.argv[0];
-const hostname = process.argv[1];
+const webhookToken = process.argv[2];
+const hostname = process.argv[3];
 
 if (!webhookToken) throw new Error('No webhooks token provided');
 
@@ -58,9 +58,9 @@ function getValidatorSet() {
 }
 
 try {
-  let validatorSet = await getValidatorSet();
+  let validatorSet;
 
-  console.log(validatorSet);
+  getValidatorSet().then((_validatorSet) => (validatorSet = _validatorSet));
 
   ws.onopen = () => {
     console.log('Tendermint connection opened');
@@ -121,13 +121,13 @@ try {
         });
         break;
       case "tm.event='ValidatorSetUpdates'":
-        const newValidatorSet = await getValidatorSet();
+        getValidatorSet().then((_validatorSet) => {
+          if (JSON.stringify(_validatorSet) === JSON.stringify(validatorSet)) return;
 
-        if (JSON.stringify(validatorSet) === JSON.stringify(newValidatorSet)) return;
+          console.log(_validatorSet);
 
-        console.log(newValidatorSet);
-
-        validatorSet = newValidatorSet;
+          validatorSet = _validatorSet;
+        });
     }
   };
 } catch (error) {
