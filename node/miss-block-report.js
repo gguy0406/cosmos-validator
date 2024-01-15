@@ -28,37 +28,39 @@ function queryFactory(id, query) {
 }
 
 function getValidatorSet() {
-  http.get(
-    'http://0.0.0.0:1317/cosmos/staking/v1beta1/validators?status=BOND_STATUS_BONDED&pagination.limit=130',
-    (res) => {
-      res.setEncoding('utf8');
+  return new Promise((resolve) => {
+    http.get(
+      'http://0.0.0.0:1317/cosmos/staking/v1beta1/validators?status=BOND_STATUS_BONDED&pagination.limit=130',
+      (res) => {
+        res.setEncoding('utf8');
 
-      let rawData = '';
-      validatorSet = {};
+        let rawData = '';
 
-      res.on('data', (chunk) => (rawData += chunk));
-      res.on('end', () => {
-        const parsedData = JSON.parse(rawData);
+        res.on('data', (chunk) => (rawData += chunk));
+        res.on('end', () => {
+          const parsedData = JSON.parse(rawData);
+          const validatorSet = {};
 
-        parsedData.validators.forEach((validator) => {
-          const base64ConsensusPubKey = validator.consensus_pubkey.key;
-          const ed25519PubkeyRaw = Buffer.from(base64ConsensusPubKey, 'base64');
-          const addressData = crypto.createHash('sha256').update(ed25519PubkeyRaw).digest().subarray(0, 20);
-          const hexAddress = addressData.toString('hex').toUpperCase();
+          parsedData.validators.forEach((validator) => {
+            const base64ConsensusPubKey = validator.consensus_pubkey.key;
+            const ed25519PubkeyRaw = Buffer.from(base64ConsensusPubKey, 'base64');
+            const addressData = crypto.createHash('sha256').update(ed25519PubkeyRaw).digest().subarray(0, 20);
+            const hexAddress = addressData.toString('hex').toUpperCase();
 
-          validatorSet[hexAddress] = validator.description.moniker;
+            validatorSet[hexAddress] = validator.description.moniker;
+          });
+
+          resolve(validatorSet);
         });
-
-        console.log(validatorSet);
-      });
-    }
-  );
+      }
+    );
+  });
 }
 
 try {
-  let validatorSet = {};
+  let validatorSet = await getValidatorSet();
 
-  getValidatorSet();
+  console.log(validatorSet);
 
   ws.onopen = () => {
     console.log('Tendermint connection opened');
@@ -79,7 +81,7 @@ try {
     sendMessageToDiscord(`Tendermint connection error ${error.message}`);
   };
 
-  ws.onmessage = (event) => {
+  ws.onmessage = async (event) => {
     const parsedSocketData = JSON.parse(event.data);
 
     if (Object.keys(parsedSocketData.result).length === 0) return;
@@ -119,7 +121,13 @@ try {
         });
         break;
       case "tm.event='ValidatorSetUpdates'":
-        getValidatorSet();
+        const newValidatorSet = await getValidatorSet();
+
+        if (JSON.stringify(validatorSet) === JSON.stringify(newValidatorSet)) return;
+
+        console.log(newValidatorSet);
+
+        validatorSet = newValidatorSet;
     }
   };
 } catch (error) {

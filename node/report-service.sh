@@ -17,6 +17,7 @@ EOF
 
 echoc "Get report script"
 bash -c "curl --fail-with-body -o ~/minds/status-report.sh $GH_URL_OPTION/node/status-report.sh"
+mkdir ~/minds/miss-block-report
 bash -c "curl --fail-with-body -o ~/minds/miss-block-report/report.js $GH_URL_OPTION/node/miss-block-report.js"
 
 echoc "Schedule report"
@@ -31,7 +32,7 @@ ExecStart=/bin/bash $HOME/minds/status-report.sh
 Group=systemd-journal
 EOF
 
-sudo tee /etc/systemd/system/$DAEMON_NAME-report.timer > /dev/null << EOF
+sudo tee /etc/systemd/system/$DAEMON_NAME-status-report.timer > /dev/null << EOF
 [Unit]
 Description=Report $DAEMON_NAME hourly
 
@@ -60,9 +61,9 @@ EOF
 curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash
 sudo apt install -y nodejs
 cd ~/minds/miss-block-report
-sudo npm i ws
+npm i ws
 sudo systemctl daemon-reload
 sudo systemctl restart systemd-journald
-sudo systemctl enable --now $DAEMON_NAME-report.timer
+sudo systemctl enable --now $DAEMON_NAME-status-report.timer
 sudo systemctl enable --now $DAEMON_NAME-miss-block-report.service
-systemctl status --no-pager -n 0 $DAEMON_NAME-report.timer $DAEMON_NAME-miss-block-report.service
+systemctl status --no-pager -n 0 $DAEMON_NAME-status-report.timer $DAEMON_NAME-miss-block-report.service
