@@ -114,7 +114,7 @@ try {
             sendMessageToDiscord(
               `block height: ${lastBlockHeader.height}\n` +
                 `signature threshold: ${(lastBlock.signatures.length / 130) * 100}%\n` +
-                `proposer: ${validatorSet[proposer_address]}` +
+                `proposer: ${validatorSet[lastBlockHeader.proposer_address]}` +
                 `block hash: ${lastBlock.block_id.hash}\n`
             );
           });
