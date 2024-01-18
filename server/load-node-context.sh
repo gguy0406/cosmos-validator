@@ -25,6 +25,7 @@ if [[ $networkType = mainnet ]]; then
 
 	case $chainName in
 		aura) RPC_SERVERS=https://snapshot-1.aura.network:443,https://snapshot-2.aura.network:443;;
+		persistence) RPC_SERVERS=https://persistence-mainnet-rpc.cosmonautstakes.com:443,https://persistence-mainnet-rpc.cosmonautstakes.com:443;;
 		stargaze) RPC_SERVERS=https://stargaze-rpc.polkachu.com:443,https://rpc.stargaze-apis.com:443,https://stargaze-rpc.ibs.team:443;;
 		stride) RPC_SERVERS=https://stride-rpc.polkachu.com:443,https://stride.rpc.chandrastation.com:443;;
 		*) getRpcServers;;
