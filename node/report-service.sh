@@ -10,6 +10,7 @@ if [[ -z $VALIDATOR_ADDRESS ]]; then echo "Missing validator address"; exit 1; f
 cat << EOF >> ~/.profile
 
 # Report variables
+export MAX_VALIDATORS=$(cat $NODE_HOME/config/genesis.json | jq -r ".app_state.staking.params.max_validators")
 export SIGNED_BLOCKS_WINDOW=$(cat $NODE_HOME/config/genesis.json | jq -r ".app_state.slashing.params.signed_blocks_window")
 export VALIDATOR_ADDRESS=$VALIDATOR_ADDRESS
 export DISCORD_WEBHOOK_URL=$DISCORD_WEBHOOK_URL
@@ -49,7 +50,7 @@ sudo tee /etc/systemd/system/$DAEMON_NAME-miss-block-report.service > /dev/null 
 Description=Miss Block Report
 
 [Service]
-ExecStart=/usr/bin/node $HOME/minds/miss-block-report/report.js $DISCORD_WEBHOOK_URL $(hostname)
+ExecStart=/usr/bin/node $HOME/minds/miss-block-report/report.js $MAX_VALIDATORS $DISCORD_WEBHOOK_URL $(hostname)
 Restart=on-failure
 RestartSec=3
 User=$USER
@@ -58,6 +59,8 @@ User=$USER
 WantedBy=multi-user.target
 EOF
 
+sed -i '/^# Enable defines if the API server should be enabled\.\nenable/ {N;s/\n/ /;s/enable = false/enable = true/}' $NODE_HOME/config/app.toml
+sudo systemctl restart $DAEMON_NAME.service
 curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash
 sudo apt install -y nodejs
 cd ~/minds/miss-block-report

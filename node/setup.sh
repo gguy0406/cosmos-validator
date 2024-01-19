@@ -3,7 +3,7 @@ set -e
 
 # Install packages
 echoc "Installing packages..."
-sudo apt install -y build-essential git landscape-common
+sudo apt install -y build-essential git
 
 # Get chain repository
 echoc "Getting chain repository..."
@@ -47,15 +47,19 @@ NODE_MONIKER="$CHAIN_NAME-$(cat /dev/urandom | tr -cd 'a-f0-9' | head -c 8)"
 $DAEMON_NAME config chain-id $CHAIN_ID
 $DAEMON_NAME init --chain-id $CHAIN_ID $NODE_MONIKER
 
+# Config chain seeds, genenis, etc..
+echoc "Config chain genenis, seeds, state sync, etc.."
+fileExtension="${GENESIS_URL##*.}"
+
+case $chainName in
+	.gz) wget -O genesis.tar.gz $GENESIS_URL; sudo tar -xzf genesis.tar.gz -C $NODE_HOME/config; rm genesis.tar.gz;;
+	.json) wget -O $NODE_HOME/config/genesis.json $GENESIS_URL;;
+	*) echo "Error getting file extension"; exit 1;;
+esac
+
 APP_TOML=$NODE_HOME/config/app.toml
 CONFIG_TOML=$NODE_HOME/config/config.toml
 
-# Config chain seeds, genenis, etc..
-echoc "Config chain genenis, seeds, state sync, etc.."
-wget -O genesis.tar.gz $GENESIS_URL
-sudo tar -xzf genesis.tar.gz -C $NODE_HOME/config
-rm genesis.tar.gz
-sed -i "s/minimum-gas-prices = .*/minimum-gas-prices = \"0$DENOM\"/" $APP_TOML
 sed -i "s/min-retain-blocks = .*/min-retain-blocks = 250000/" $APP_TOML
 sed -i "s/pruning = .*/pruning = \"custom\"/" $APP_TOML
 sed -i "s/pruning-keep-recent = .*/pruning-keep-recent = \"100\"/" $APP_TOML
@@ -66,7 +70,6 @@ sed -i "s/max_num_inbound_peers = .*/max_num_inbound_peers = 120/" $CONFIG_TOML
 sed -i "s/max_num_outbound_peers = .*/max_num_outbound_peers = 60/" $CONFIG_TOML
 sed -i "s/indexer = .*/indexer = \"null\"/" $CONFIG_TOML
 sed -i "s/enable = false/enable = true/" $CONFIG_TOML
-sed -i "s|rpc_servers = .*|rpc_servers = \"$RPC_SERVERS\"|" $CONFIG_TOML
 
 echo -ne "\e[32m"
 sed -n '/^minimum-gas-prices =/p' $APP_TOML
@@ -82,6 +85,8 @@ sed -n '/^indexer =/p' $CONFIG_TOML
 sed -n '/^enable =/p' $CONFIG_TOML
 sed -n '/^rpc_servers =/p' $CONFIG_TOML
 echo -ne "\e[0m"
+
+executeScript node/chain-specific-setting/$CHAIN_NAME
 
 TRUST_HEIGHT=$(($(curl -s $RPC_ENDPOINT/block | jq -r .result.block.header.height) - 1000))
 TRUST_HASH=$(curl -s $RPC_ENDPOINT/block?height=$TRUST_HEIGHT | jq -r .result.block_id.hash)
@@ -110,7 +115,7 @@ LimitNOFILE=4096
 [Install]
 WantedBy=multi-user.target
 EOF
-sudo mv /etc/systemd/system/$DAEMON_NAME.service /lib/systemd/system
+
 sudo systemctl daemon-reload
 sudo systemctl restart systemd-journald
 sudo systemctl enable --now $DAEMON_NAME

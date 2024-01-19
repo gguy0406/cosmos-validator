@@ -3,8 +3,9 @@ const https = require('node:https');
 const WebSocket = require('ws');
 const crypto = require('node:crypto');
 
-const webhookToken = process.argv[2];
-const hostname = process.argv[3];
+const maxValidators = process.argv[2];
+const webhookToken = process.argv[3];
+const hostname = process.argv[4];
 
 if (!webhookToken) throw new Error('No webhooks token provided');
 
@@ -30,7 +31,7 @@ function queryFactory(id, query) {
 function getValidatorSet() {
   return new Promise((resolve) => {
     http.get(
-      'http://0.0.0.0:1317/cosmos/staking/v1beta1/validators?status=BOND_STATUS_BONDED&pagination.limit=130',
+      `http://0.0.0.0:1317/cosmos/staking/v1beta1/validators?status=BOND_STATUS_BONDED&pagination.limit=${maxValidators}`,
       (res) => {
         res.setEncoding('utf8');
 
@@ -91,7 +92,7 @@ try {
         const lastBlock = parsedSocketData.result.data.value.block.last_commit;
 
         if (
-          lastBlock.signatures.length / 130 > 0.7 &&
+          lastBlock.signatures.length / maxValidators > 0.7 &&
           lastBlock.signatures.find(
             (signature) => signature.validator_address === '54670CE963DE9962D1A82A2E4741888E884B0BA2'
           )
@@ -113,7 +114,7 @@ try {
 
             sendMessageToDiscord(
               `block height: ${lastBlockHeader.height}\n` +
-                `signature threshold: ${(lastBlock.signatures.length / 130) * 100}%\n` +
+                `signature threshold: ${(lastBlock.signatures.length / maxValidators) * 100}%\n` +
                 `proposer: ${validatorSet[lastBlockHeader.proposer_address]}` +
                 `block hash: ${lastBlock.block_id.hash}\n`
             );

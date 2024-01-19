@@ -32,6 +32,8 @@ echo "$passphrase" | $DAEMON_NAME tx staking create-validator \
 	--moniker=$($DAEMON_NAME status | jq -r .NodeInfo.moniker) \
 	--identity=1C502DEF8B9EBFEE \
 	--website=$website \
+	# --details
+	# --security-contact
 	-y
 
 $DAEMON_NAME q tendermint-validator-set | grep $($DAEMON_NAME tendermint show-address)

@@ -40,8 +40,3 @@ sudo ufw status
 # Set journalctl limit
 echoc "Set journalctl limit"
 sudo journalctl --vacuum-size=1G --vacuum-time=7days
-
-# Import gpg public key
-echoc "Import gpg public key"
-bash -c "curl --fail-with-body -o ~/minds/public.gpg $GH_URL_OPTION/server/public.gpg"
-gpg --import ~/minds/public.gpg
