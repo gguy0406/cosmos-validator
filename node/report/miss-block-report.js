@@ -1,15 +1,12 @@
+const crypto = require('node:crypto');
 const http = require('node:http');
 const https = require('node:https');
 const WebSocket = require('ws');
-const crypto = require('node:crypto');
 
-const maxValidators = process.argv[2];
-const webhookToken = process.argv[3];
-const hostname = process.argv[4];
-
-if (!webhookToken) throw new Error('No webhooks token provided');
-
-const ws = new WebSocket('ws://0.0.0.0:26657/websocket');
+const webhookToken = process.argv[2];
+const hostname = process.argv[3];
+const valAddress = process.argv[4];
+const maxValidators = process.argv[5];
 
 function sendMessageToDiscord(message) {
   const req = https.request({
@@ -63,6 +60,13 @@ try {
 
   getValidatorSet().then((_validatorSet) => (validatorSet = _validatorSet));
 
+  const ws = new WebSocket('ws://0.0.0.0:26657/websocket');
+
+  ws.onerror = (error) => {
+    console.error(`Tendermint connection error ${error.message}`);
+    sendMessageToDiscord(`Tendermint connection error ${error.message}`);
+  };
+
   ws.onopen = () => {
     console.log('Tendermint connection opened');
     sendMessageToDiscord('Tendermint connection opened');
@@ -70,16 +74,6 @@ try {
     ws.send(queryFactory(1, "tm.event='ValidatorSetUpdates'"));
     // ws.send(queryFactory(2, "tm.event='TimeoutPropose'"));
     // ws.send(queryFactory(3, "tm.event='TimeoutWait'"));
-  };
-
-  ws.onclose = () => {
-    console.log('Tendermint connection closed');
-    sendMessageToDiscord('Tendermint connection closed');
-  };
-
-  ws.onerror = (error) => {
-    console.error(`Tendermint connection error ${error.message}`);
-    sendMessageToDiscord(`Tendermint connection error ${error.message}`);
   };
 
   ws.onmessage = async (event) => {
@@ -93,9 +87,7 @@ try {
 
         if (
           lastBlock.signatures.length / maxValidators > 0.7 &&
-          lastBlock.signatures.find(
-            (signature) => signature.validator_address === '54670CE963DE9962D1A82A2E4741888E884B0BA2'
-          )
+          lastBlock.signatures.find((signature) => signature.validator_address === valAddress)
         )
           return;
 
@@ -113,10 +105,11 @@ try {
             const lastBlockHeader = parsedHttpData.result.block.header;
 
             sendMessageToDiscord(
-              `block height: ${lastBlockHeader.height}\n` +
-                `signature threshold: ${(lastBlock.signatures.length / maxValidators) * 100}%\n` +
-                `proposer: ${validatorSet[lastBlockHeader.proposer_address]}` +
-                `block hash: ${lastBlock.block_id.hash}\n`
+              'Missed block report' +
+                `\n\tHeight: ${lastBlockHeader.height}` +
+                `\n\tSignature threshold: ${(lastBlock.signatures.length / maxValidators).toFixed(4) * 100}%` +
+                `\n\tProposer: ${validatorSet[lastBlockHeader.proposer_address]}` +
+                `\n\tHash: ${lastBlock.block_id.hash}`
             );
           });
         });

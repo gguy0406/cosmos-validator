@@ -1,25 +1,24 @@
 #!/bin/bash
 set -e
 
-DISCORD_WEBHOOK_URL=$1
+DISCORD_WEBHOOK_TOKEN=$1
 VALIDATOR_ADDRESS=$2
 
-if [[ -z $DISCORD_WEBHOOK_URL ]]; then echo "Missing discord webhook url"; exit 1; fi
+if [[ -z $DISCORD_WEBHOOK_TOKEN ]]; then echo "Missing discord webhook url"; exit 1; fi
 if [[ -z $VALIDATOR_ADDRESS ]]; then echo "Missing validator address"; exit 1; fi
 
 cat << EOF >> ~/.profile
 
 # Report variables
-export MAX_VALIDATORS=$(cat $NODE_HOME/config/genesis.json | jq -r ".app_state.staking.params.max_validators")
 export SIGNED_BLOCKS_WINDOW=$(cat $NODE_HOME/config/genesis.json | jq -r ".app_state.slashing.params.signed_blocks_window")
 export VALIDATOR_ADDRESS=$VALIDATOR_ADDRESS
-export DISCORD_WEBHOOK_URL=$DISCORD_WEBHOOK_URL
+export DISCORD_WEBHOOK_TOKEN=$DISCORD_WEBHOOK_TOKEN
 EOF
 
 echoc "Get report script"
-bash -c "curl --fail-with-body -o ~/minds/status-report.sh $GH_URL_OPTION/node/status-report.sh"
-mkdir ~/minds/miss-block-report
-bash -c "curl --fail-with-body -o ~/minds/miss-block-report/report.js $GH_URL_OPTION/node/miss-block-report.js"
+bash -c "curl --fail-with-body -o ~/minds/status-report.sh $GH_URL_OPTION/node/report/status-report.sh"
+mkdir -p ~/minds/miss-block-report
+bash -c "curl --fail-with-body -o ~/minds/miss-block-report/report.js $GH_URL_OPTION/node/report/miss-block-report.js"
 
 echoc "Schedule report"
 sudo tee /etc/systemd/system/$DAEMON_NAME-status-report.service > /dev/null << EOF
@@ -45,13 +44,16 @@ Persistent=true
 WantedBy=timers.target
 EOF
 
+HEX_VAL_ADDRESS=$($DAEMON_NAME bech32 decode --hex $($DAEMON_NAME tendermint show-address))
+MAX_VALIDATORS=$(cat $NODE_HOME/config/genesis.json | jq -r ".app_state.staking.params.max_validators")
+
 sudo tee /etc/systemd/system/$DAEMON_NAME-miss-block-report.service > /dev/null << EOF
 [Unit]
 Description=Miss Block Report
 
 [Service]
-ExecStart=/usr/bin/node $HOME/minds/miss-block-report/report.js $MAX_VALIDATORS $DISCORD_WEBHOOK_URL $(hostname)
-Restart=on-failure
+ExecStart=/usr/bin/node $HOME/minds/miss-block-report/report.js $DISCORD_WEBHOOK_TOKEN $(hostname) $HEX_VAL_ADDRESS $MAX_VALIDATORS
+Restart=always
 RestartSec=3
 User=$USER
 
@@ -65,6 +67,7 @@ curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash
 sudo apt install -y nodejs
 cd ~/minds/miss-block-report
 npm i ws
+cd ~
 sudo systemctl daemon-reload
 sudo systemctl restart systemd-journald
 sudo systemctl enable --now $DAEMON_NAME-status-report.timer $DAEMON_NAME-miss-block-report.service

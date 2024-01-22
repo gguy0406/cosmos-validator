@@ -19,26 +19,36 @@ Get some utility scripts
 echo -e "\n# Github API" >> ~/.profile
 echo -e "export GH_URL_OPTION=\"-L -H \\\"Accept: application/vnd.github.raw\\\" -H \\\"X-GitHub-Api-Version: 2022-11-28\\\" https://api.github.com/repos/gguy0406/cosmos-validator/contents\"" >> ~/.profile
 source ~/.profile
-echo -e "\n# Preload function\nsource ~/minds/preload-fn.sh" >> ~/.profile
+echo -e "\n# Preload function\nsource ~/minds/util-fn.sh" >> ~/.profile
 
 # Get script
 sudo apt install -y curl landscape-common
 mkdir -p ~/minds
-bash -c "curl --fail-with-body -o ~/minds/preload-fn.sh $GH_URL_OPTION/server/preload-fn.sh"
+bash -c "curl --fail-with-body -o ~/minds/util-fn.sh $GH_URL_OPTION/server/util-fn.sh"
 source ~/.profile
 ```
 
 All set, now you can start executing any script by the `executeScript` command, e.g. setup server, load node context
 
 ```bash
-executeScript server/setup.sh
-executeScript server/load-node-context.sh && source ~/.profile
+executeScript server/config-firewall.sh
+executeScript node/load-context.sh && source ~/.profile
 ```
 
-After checking all parameter set correctly
+```bash
+executeScript node/setup-binary.sh
+```
+
+In case state sync module fail and need to rerun, recheck rpc servers and execute following script
 
 ```bash
-executeScript node/setup.sh
+executeScript node/reset-state-sync.sh 1000
+```
+
+Setup background service
+
+```bash
+executeScript node/setup-bg-service.sh
 ```
 
 # Resources

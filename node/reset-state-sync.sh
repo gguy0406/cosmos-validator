@@ -1,7 +1,5 @@
 #!/bin/bash
 set -e
-
-sudo systemctl stop $DAEMON_NAME
 $DAEMON_NAME tendermint unsafe-reset-all --keep-addr-book
 
 TRUST_HEIGHT=$(($(curl -s $RPC_ENDPOINT/block | jq -r .result.block.header.height) - "${1:-1000}"))
@@ -15,6 +13,4 @@ sed -n '/^trust_height =/p' $CONFIG_TOML
 sed -n '/^trust_hash =/p' $CONFIG_TOML
 echo -ne "\e[0m"
 
-sudo systemctl restart systemd-journald
-sudo systemctl start $DAEMON_NAME
-monitorService
+$DAEMON_NAME start --x-crisis-skip-assert-invariants

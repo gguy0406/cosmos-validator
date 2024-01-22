@@ -36,7 +36,3 @@ sudo sed -n '/*echo-requrest -j DROP/p' /etc/ufw/before.rules
 echo -ne "\e[0m"
 yes | sudo ufw enable
 sudo ufw status
-
-# Set journalctl limit
-echoc "Set journalctl limit"
-sudo journalctl --vacuum-size=1G --vacuum-time=7days

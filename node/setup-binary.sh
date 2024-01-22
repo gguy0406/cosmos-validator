@@ -97,26 +97,4 @@ echo -ne "\e[32m"
 sed -n '/^trust_height =/p' $CONFIG_TOML
 sed -n '/^trust_hash =/p' $CONFIG_TOML
 echo -ne "\e[0m"
-
-# Create service file and start the daemon
-echoc "Create service file and start the daemon"
-sudo tee /etc/systemd/system/$DAEMON_NAME.service > /dev/null << EOF
-[Unit]
-Description=$PRETTY_NAME Daemon
-After=network-online.target
-
-[Service]
-User=$USER
-ExecStart=$(which $DAEMON_NAME) start --x-crisis-skip-assert-invariants
-Restart=always
-RestartSec=3
-LimitNOFILE=4096
-
-[Install]
-WantedBy=multi-user.target
-EOF
-
-sudo systemctl daemon-reload
-sudo systemctl restart systemd-journald
-sudo systemctl enable --now $DAEMON_NAME
-monitorService
+$DAEMON_NAME start --x-crisis-skip-assert-invariants
