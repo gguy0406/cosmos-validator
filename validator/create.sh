@@ -15,7 +15,7 @@ $DAEMON_NAME tx staking create-validator \
 	--min-self-delegation="1000000" \
 	--moniker=$($DAEMON_NAME status | jq -r .NodeInfo.moniker) \
 	# --identity=1C502DEF8B9EBFEE \
-	# --details
+	# --details \
 	# --website=$website \
 	# --security-contact
 	-y

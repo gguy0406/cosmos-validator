@@ -86,7 +86,7 @@ sed -n '/^enable =/p' $CONFIG_TOML
 sed -n '/^rpc_servers =/p' $CONFIG_TOML
 echo -ne "\e[0m"
 
-executeScript node/chain-specific-setting/$CHAIN_NAME
+executeScript node/chain-specific-setting/$CHAIN_ID
 
 TRUST_HEIGHT=$(($(curl -s $RPC_ENDPOINT/block | jq -r .result.block.header.height) - 1000))
 TRUST_HASH=$(curl -s $RPC_ENDPOINT/block?height=$TRUST_HEIGHT | jq -r .result.block_id.hash)
