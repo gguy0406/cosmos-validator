@@ -48,7 +48,7 @@ executeScript node/reset-state-sync.sh 1000
 Setup background service
 
 ```bash
-executeScript node/setup-bg-service.sh
+executeScript node/setup-service.sh
 ```
 
 # Resources

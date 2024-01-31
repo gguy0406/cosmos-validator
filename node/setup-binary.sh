@@ -51,9 +51,9 @@ $DAEMON_NAME init --chain-id $CHAIN_ID $NODE_MONIKER
 echoc "Config chain genenis, seeds, state sync, etc.."
 fileExtension="${GENESIS_URL##*.}"
 
-case $chainName in
-	.gz) wget -O genesis.tar.gz $GENESIS_URL; sudo tar -xzf genesis.tar.gz -C $NODE_HOME/config; rm genesis.tar.gz;;
-	.json) wget -O $NODE_HOME/config/genesis.json $GENESIS_URL;;
+case $fileExtension in
+	gz) wget -O genesis.tar.gz $GENESIS_URL; sudo tar -xzf genesis.tar.gz -C $NODE_HOME/config; rm genesis.tar.gz;;
+	json) wget -O $NODE_HOME/config/genesis.json $GENESIS_URL;;
 	*) echo "Error getting file extension"; exit 1;;
 esac
 
@@ -72,7 +72,6 @@ sed -i "s/indexer = .*/indexer = \"null\"/" $CONFIG_TOML
 sed -i "s/enable = false/enable = true/" $CONFIG_TOML
 
 echo -ne "\e[32m"
-sed -n '/^minimum-gas-prices =/p' $APP_TOML
 sed -n '/^min-retain-blocks =/p' $APP_TOML
 sed -n '/^pruning =/p' $APP_TOML
 sed -n '/^pruning-keep-recent =/p' $APP_TOML
@@ -83,7 +82,6 @@ sed -n '/^max_num_inbound_peers =/p' $CONFIG_TOML
 sed -n '/^max_num_outbound_peers =/p' $CONFIG_TOML
 sed -n '/^indexer =/p' $CONFIG_TOML
 sed -n '/^enable =/p' $CONFIG_TOML
-sed -n '/^rpc_servers =/p' $CONFIG_TOML
 echo -ne "\e[0m"
 
 executeScript node/chain-specific-setting/$CHAIN_ID

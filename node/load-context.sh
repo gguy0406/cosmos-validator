@@ -78,7 +78,6 @@ export RECOMMENDED_VERSION=$RECOMMENDED_VERSION
 export GENESIS_URL=$GENESIS_URL
 export SEEDS=$SEEDS
 export RPC_ENDPOINT=$RPC_ENDPOINT
-export RPC_SERVERS=$RPC_SERVERS
 EOF
 source ~/.profile
 
@@ -97,7 +96,6 @@ echog "Recommended version:\t$RECOMMENDED_VERSION"
 echog "Genesis url:\t\t\t$GENESIS_URL"
 echog "Seeds ($NO_SEED):\t\t\t\t$SEEDS"
 echog "RPC endpoint:\t\t\t$RPC_ENDPOINT"
-echog "RPC servers (manual):\t$RPC_SERVERS"
 printf '\033[?7h'
 
 echoy "Should manually recheck git version, chain's developers may not update it frequently"

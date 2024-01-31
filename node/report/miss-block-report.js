@@ -84,9 +84,15 @@ try {
     switch (parsedSocketData.result.query) {
       case "tm.event='NewBlock'":
         const lastBlock = parsedSocketData.result.data.value.block.last_commit;
+        const signatureThreshold =
+          lastBlock.signatures.reduce((sum, signatureObj) => {
+            sum += +!!signatureObj.signature;
+
+            return sum;
+          }, 0) / maxValidators;
 
         if (
-          lastBlock.signatures.length / maxValidators > 0.7 &&
+          signatureThreshold > 0.7 &&
           lastBlock.signatures.find((signature) => signature.validator_address === valAddress)
         )
           return;
@@ -107,9 +113,8 @@ try {
             sendMessageToDiscord(
               'Missed block report' +
                 `\n\tHeight: ${lastBlockHeader.height}` +
-                `\n\tSignature threshold: ${(lastBlock.signatures.length / maxValidators).toFixed(4) * 100}%` +
-                `\n\tProposer: ${validatorSet[lastBlockHeader.proposer_address]}` +
-                `\n\tHash: ${lastBlock.block_id.hash}`
+                `\n\tSignature threshold: ${(signatureThreshold * 100).toFixed(2)}%` +
+                `\n\tProposer: ${validatorSet[lastBlockHeader.proposer_address]}`
             );
           });
         });
