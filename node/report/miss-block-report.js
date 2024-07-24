@@ -39,7 +39,7 @@ function getValidatorSet() {
           const parsedData = JSON.parse(rawData);
           const validatorSet = {};
 
-          parsedData.validators.forEach((validator) => {
+          parsedData.validators?.forEach((validator) => {
             const base64ConsensusPubKey = validator.consensus_pubkey.key;
             const ed25519PubkeyRaw = Buffer.from(base64ConsensusPubKey, 'base64');
             const addressData = crypto.createHash('sha256').update(ed25519PubkeyRaw).digest().subarray(0, 20);
